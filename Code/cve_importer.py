@@ -117,14 +117,13 @@ def import_cves():
             zip_file_url = urlhead + str(year) + urltail
 
             # Check if the directory already has the json file or not ?
-            if os.path.isfile(Path(cf.DATA_PATH) / 'json' / extract_target):
-                cf.logger.warning('Reusing', year, 'CVE json file that was downloaded earlier...')
-                json_file = Path(cf.DATA_PATH) / 'json' / extract_target
-            else:
+            cf.logger.warning('Reusing', year, 'CVE json file that was downloaded earlier...')
+            json_file = Path(cf.DATA_PATH) / 'json' / extract_target
+            # else:
                 # url_to_open = urlopen(zip_file_url, timeout=10)
-                r = requests.get(zip_file_url)
-                z = ZipFile(BytesIO(r.content))  # BytesIO keeps the file in memory
-                json_file = z.extract(extract_target, Path(cf.DATA_PATH) / 'json')
+                # r = requests.get(zip_file_url)
+                # z = ZipFile(BytesIO(r.content))  # BytesIO keeps the file in memory
+                # json_file = z.extract(extract_target, Path(cf.DATA_PATH) / 'json')
 
             with open(json_file) as f:
                 yearly_data = json.load(f)

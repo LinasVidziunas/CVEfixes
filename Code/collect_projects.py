@@ -11,6 +11,9 @@ from collect_commits import extract_commits, extract_project_links
 import cve_importer
 from utils import prune_tables
 
+import argparse
+import pathlib
+
 repo_columns = [
     'repo_url',
     'repo_name',
@@ -239,6 +242,24 @@ def store_tables(df_fixes):
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    arg_parser: argparse.ArgumentParser = argparse.ArgumentParser("CVEfixes")
+    arg_parser.add_argument("--database-path", help="Override the specified database path in the configuration file", type=str)
+    arg_parser.add_argument("--database-name", help="Override the specified database name in the configuration file", type=str)
+    arg_parser.add_argument("--num-workers", help="Override the specified number of threads in the configuration file", type=int)
+
+    args: argparse.Namespace = arg_parser.parse_args()
+
+    if args.database_path:
+        cf.DATA_PATH = args.database_path
+        pathlib.Path(cf.DATA_PATH).mkdir(parents=True, exist_ok=True)  # create the directory if not exists.
+    if args.database_name:
+        cf.DATABASE_NAME = args.database_name
+    if args.num_workers:
+        cf.NUM_WORKERS = args.num_workers
+
+    if args.database_path or args.database_name:
+        cf.DATABASE = pathlib.Path(cf.DATA_PATH) / cf.DATABASE_NAME
+
     print(find_unavailable_urls([]))
     start_time = time.perf_counter()
     # Step (1) save CVEs(cve) and cwe tables
